@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/src/style.css" />
+    <title>canvas App</title>
+  </head>
+  <body>
+    <main>
+      <canvas id="main-canvas"> </canvas>
+      <div id="toolBox">
+        <button id="move-button" type="button">移動</button>
+        <button id="pen-button" type="button">ペン</button>
+        <label for="colorPalet-input">カラーパレット</label>
+        <input id="colorPalet-input" name="colorPalet" type="color" />
+        <button id="save-canvas-button" type="button">保存</button>
+        <button id="export-canvas-button" popovertarget="format-popover" data-popover-id="format-popover">
+          出力
+        </button>
+        <div id="format-popover" popover>
+          <div id="jpeg">jpeg</div>
+          <div id="png">png</div>
+        </div>
+      </div>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
