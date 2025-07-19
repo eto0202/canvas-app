@@ -8,19 +8,24 @@
   </head>
   <body>
     <main>
-      <canvas id="main-canvas"> </canvas>
+      <canvas id="main-canvas"></canvas>
+      <div id="cursor-brush"></div>
       <div id="toolBox">
         <button id="move-button" type="button">移動</button>
+        <button id="clear-button" type="button">クリア</button>
         <button id="pen-button" type="button">ペン</button>
-        <label for="colorPalet-input">カラーパレット</label>
-        <input id="colorPalet-input" name="colorPalet" type="color" />
+        <button id="eraser-button" type="button">消しゴム</button>
+        <div id="tool-width">
+          <label for="width-input">太さ</label>
+          <input id="width-input" type="number" value="10" min="1" max="100" />
+        </div>
+        <label for="color-input">カラーパレット</label>
+        <input id="color-input" name="colorPalet" type="color" value="#000000" />
         <button id="save-canvas-button" type="button">保存</button>
-        <button id="export-canvas-button" popovertarget="format-popover" data-popover-id="format-popover">
-          出力
-        </button>
-        <div id="format-popover" popover>
-          <div id="jpeg">jpeg</div>
-          <div id="png">png</div>
+        <button id="export-canvas-button" popovertarget="export-format-popover">出力</button>
+        <div id="export-format-popover" class="custom-button hidden" type="button" popover>
+          <div id="export-jpeg" class="custom-li" data-value="jpeg">jpeg</div>
+          <div id="export-png" class="custom-li" data-value="png">png</div>
         </div>
       </div>
     </main>

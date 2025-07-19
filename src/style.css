@@ -17,6 +17,17 @@ main {
   box-shadow: inset 1px 1px 14px 1px rgb(0, 0, 0, 0.8);
 }
 
+#cursor-brush {
+  border-radius: 50%;
+  border: 1px solid #000000;
+  position: fixed;
+  pointer-events: none;
+  display: none;
+  left: 0;
+  top: 0;
+  will-change: transform;
+}
+
 #toolBox {
   position: fixed;
   top: 80%;
@@ -28,16 +39,39 @@ main {
   max-width: fit-content;
 
   padding: 10px;
-  box-shadow: 1px 1px 10px 10px rgb(0, 0, 0, 0.3);
+  box-shadow: 1px 1px 5px 1px rgb(0, 0, 0, 0.3);
 
   background-color: #ffffff;
 
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
-#format-popover:popover-open {
+#export-format-popover {
   margin: 0;
   display: flex;
   flex-direction: column;
-  padding: 0;
+  padding: 10px;
+  gap: 10px;
+
+  border: 1px solid transparent;
+  border-radius: 8px;
+  box-shadow: 1px 1px 5px 2px rgb(0, 0, 0, 0.3);
+
+  opacity: 0;
+  transform: translateY(10px);
+
+  transition: opacity 0.3s ease, transform 0.3s ease, display 0.3s;
+  transition-behavior: allow-discrete;
+}
+
+#export-format-popover:popover-open {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@starting-style {
+  #export-format-popover:popover-open {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
