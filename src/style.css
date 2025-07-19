@@ -7,6 +7,10 @@ main {
   width: 100%;
 }
 
+button {
+  cursor: pointer;
+}
+
 #main-canvas {
   display: block;
   position: relative;
@@ -48,10 +52,6 @@ main {
 
 #export-format-popover {
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  gap: 10px;
 
   border: 1px solid transparent;
   border-radius: 8px;
@@ -74,4 +74,10 @@ main {
     opacity: 0;
     transform: translateY(10px);
   }
+}
+
+#format-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

@@ -12,10 +12,12 @@ export class CursorUI {
 
   constructor() {
     this.brushElement = dom.cursorBrush;
+    this.brushElement.style.display = "none";
+
     this.addEventListeners();
     // アニメーションループを開始
     this.animationLoop();
-    this.setTool(this.currentTool);
+    this.updateCursorState();
   }
 
   private addEventListeners() {
@@ -29,25 +31,24 @@ export class CursorUI {
     dom.mainCanvas.addEventListener("mouseenter", this.show.bind(this));
     dom.mainCanvas.addEventListener("mouseleave", this.hide.bind(this));
 
-    document.addEventListener("mousedown", this.onMouseDown.bind(this));
+    dom.mainCanvas.addEventListener("mousedown", this.onMouseDown.bind(this));
     document.addEventListener("mouseup", this.onMouseUp.bind(this));
   }
 
-  private onMouseDown(e: MouseEvent) {
-    if (this.currentTool === "move" && e.target === this.mainCanvas) {
+  private onMouseDown() {
+    if (this.currentTool === "move") {
       this.isDragging = true;
-      this.mainCanvas.style.cursor = "grabbing";
+      this.updateCursorState();
     }
   }
 
   private onMouseUp() {
     if (this.isDragging) {
       this.isDragging = false;
-      this.mainCanvas.style.cursor = "grab";
+      this.updateCursorState();
     }
   }
 
-  // ★ パフォーマンス改善の秘策
   private animationLoop() {
     // brushElementの位置を更新
     this.brushElement.style.transform = `translate(${this.mousePos.x}px, ${this.mousePos.y}px)`;
@@ -56,35 +57,25 @@ export class CursorUI {
     requestAnimationFrame(this.animationLoop.bind(this));
   }
 
-  // --- 外部から呼び出すメソッド ---
+  private updateCursorState() {
+    switch (this.currentTool) {
+      case "pen":
+      case "eraser":
+        this.mainCanvas.style.cursor = "none";
+        break;
+
+      case "move":
+        this.mainCanvas.style.cursor = this.isDragging ? "grabbing" : "grab";
+    }
+  }
 
   public setTool(tool: "pen" | "eraser" | "move") {
     this.currentTool = tool;
     this.isDragging = false;
-
-    switch (tool) {
-      case "pen":
-      case "eraser":
-        this.mainCanvas.style.cursor = "none";
-        this.brushElement.style.display = "block";
-        break;
-
-      case "move":
-        this.mainCanvas.style.cursor = "grab";
-        this.brushElement.style.display = "none";
-        break;
-    }
+    this.updateCursorState();
   }
 
   public setStyle(color: string, size: number) {
-    // サイズが小さすぎる場合のフォールバック
-    if (size < 2) {
-      this.brushElement.style.display = "none";
-      return;
-    } else if (this.currentTool !== "move") {
-      this.brushElement.style.display = "block";
-    }
-
     const offset = size / 2;
     this.brushElement.style.width = `${size}px`;
     this.brushElement.style.height = `${size}px`;
@@ -94,12 +85,11 @@ export class CursorUI {
     // 消しゴムツールの場合は色を固定
     this.brushElement.style.borderColor = this.currentTool === "eraser" ? "#000000ff" : color;
     this.brushElement.style.backgroundColor =
-      this.currentTool === "eraser" ? "#ffffffff" : "transparet";
+      this.currentTool === "eraser" ? "#ffffffff" : "transparent";
   }
 
   private show() {
     if (this.currentTool !== "move") {
-      this.mainCanvas.style.setProperty("--cursor-none", "none");
       this.brushElement.style.display = "block";
     }
   }

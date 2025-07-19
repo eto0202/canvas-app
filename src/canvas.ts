@@ -3,7 +3,7 @@ import * as state from "./state";
 
 export type Tool = "pen" | "eraser" | "move";
 
-const canvasPadding = 50;
+const CANVAS_PADDING = 25;
 
 export class DrawingCanvas {
   private mainCanvas: HTMLCanvasElement;
@@ -50,8 +50,8 @@ export class DrawingCanvas {
     this.mainCanvas.height = rect.height * dpr;
     this.mainCtx.scale(dpr, dpr);
 
-    this.contentCanvas.width = this.mainCanvas.width - canvasPadding;
-    this.contentCanvas.height = this.mainCanvas.height - canvasPadding;
+    this.contentCanvas.width = this.mainCanvas.width - CANVAS_PADDING * 2;
+    this.contentCanvas.height = this.mainCanvas.height - CANVAS_PADDING * 2;
 
     // 起動時にデータを復元
     this.loadFromStorage();
@@ -103,10 +103,19 @@ export class DrawingCanvas {
     e.preventDefault();
 
     const scaleAmount = -e.deltaY * 0.001;
-    const newScale = this.transform.scale + scaleAmount;
+    const oldScale = this.transform.scale;
+    const newScale = Math.max(0.1, Math.min(oldScale + scaleAmount, 10));
     // スケール範囲を制限
+    this.transform.scale = newScale;
 
-    this.transform.scale = Math.max(0.1, Math.min(newScale, 10));
+    // ズームの中心点を計算
+    const mouseX = e.offsetX;
+    const mouseY = e.offsetY;
+
+    // 中心点を基準に拡大縮小するように調整
+    this.transform.x = mouseX - (mouseX - this.transform.x) * (newScale / oldScale);
+    this.transform.y = mouseY - (mouseY - this.transform.y) * (newScale / oldScale);
+
     this.redraw();
   }
 
@@ -139,19 +148,16 @@ export class DrawingCanvas {
       this.transform.y
     );
 
-    this.mainCtx.drawImage(this.contentCanvas, 0, 0);
-
-    // ボーダーを描画するためにメインキャンバスの変更をリセット
-    this.mainCtx.setTransform(1, 0, 0, 1, 0, 0);
+    this.mainCtx.drawImage(this.contentCanvas, CANVAS_PADDING, CANVAS_PADDING);
 
     this.mainCtx.strokeStyle = "rgb(0, 0, 0, 0.8)";
     this.mainCtx.lineWidth = 1;
 
     this.mainCtx.strokeRect(
-      this.transform.x,
-      this.transform.y,
-      this.contentCanvas.width * this.transform.scale,
-      this.contentCanvas.height * this.transform.scale
+      CANVAS_PADDING,
+      CANVAS_PADDING,
+      this.contentCanvas.width,
+      this.contentCanvas.height
     );
   }
 
@@ -214,6 +220,7 @@ export class DrawingCanvas {
   private restoreFromDataURL(dataUrl: string) {
     const image = new Image();
     image.onload = () => {
+      this.contentCtx.fillStyle = "#ffffff";
       this.contentCtx.clearRect(0, 0, this.contentCanvas.width, this.contentCanvas.height);
       this.contentCtx.drawImage(image, 0, 0);
       this.redraw();
@@ -225,8 +232,8 @@ export class DrawingCanvas {
   // 画面上の座標を変形後のキャンバス座標に変換する
   private getTransformedPoint(x: number, y: number) {
     return {
-      x: (x - this.transform.x) / this.transform.scale,
-      y: (y - this.transform.y) / this.transform.scale,
+      x: (x - this.transform.x) / this.transform.scale - CANVAS_PADDING,
+      y: (y - this.transform.y) / this.transform.scale - CANVAS_PADDING,
     };
   }
 }

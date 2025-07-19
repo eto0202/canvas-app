@@ -22,10 +22,14 @@
         <label for="color-input">カラーパレット</label>
         <input id="color-input" name="colorPalet" type="color" value="#000000" />
         <button id="save-canvas-button" type="button">保存</button>
-        <button id="export-canvas-button" popovertarget="export-format-popover">出力</button>
-        <div id="export-format-popover" class="custom-button hidden" type="button" popover>
-          <div id="export-jpeg" class="custom-li" data-value="jpeg">jpeg</div>
-          <div id="export-png" class="custom-li" data-value="png">png</div>
+        <button id="export-canvas-button" popovertarget="export-format-popover" type="button">
+          出力
+        </button>
+        <div id="export-format-popover" class="custom-button hidden" popover>
+          <div id="format-box">
+            <div id="export-jpeg" class="custom-li" data-value="jpeg">jpeg</div>
+            <div id="export-png" class="custom-li" data-value="png">png</div>
+          </div>
         </div>
       </div>
     </main>
