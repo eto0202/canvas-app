@@ -35,7 +35,14 @@ export class DrawingCanvas {
     this.mainCtx = this.mainCanvas.getContext("2d")!;
 
     this.contentCanvas = document.createElement("canvas");
-    this.contentCtx = this.contentCanvas.getContext("2d")!;
+    // getContext()にオプションを渡すと、TypeScriptは戻り値をRenderingContext型として推論する。
+    this.contentCtx = this.contentCanvas.getContext("2d", {
+      willReadFrequenty: true,
+    }) as CanvasRenderingContext2D;
+
+    if (!this.contentCtx) {
+      throw new Error("コンテキストの取得に失敗しました。");
+    }
 
     this.initialize();
     this.addEventListeners();
@@ -214,6 +221,35 @@ export class DrawingCanvas {
       this.restoreFromDataURL(dataUrl);
       // 読み込んだ状態を履歴の初期値にする
       state.addHistoryEntry(dataUrl);
+    }
+  }
+
+  public getCanvasDataURL(format: "image/jpeg" | "image/png", quality: number = 1): string | null {
+    try {
+      // 現在の描画内容を一時的に保存
+      const currentContent = this.contentCtx.getImageData(
+        0,
+        0,
+        this.contentCanvas.width,
+        this.contentCanvas.height
+      );
+
+      // 背景を白で塗りつぶす
+      this.contentCtx.globalCompositeOperation = "destination-over";
+      this.contentCtx.fillStyle = "#ffffff";
+      this.contentCtx.fillRect(0, 0, this.contentCanvas.width, this.contentCanvas.height);
+
+      const dataUrl = this.contentCanvas.toDataURL(format, quality);
+
+      // キャンバスをもとの状態に戻す
+      this.contentCtx.clearRect(0, 0, this.contentCanvas.width, this.contentCanvas.height);
+      this.contentCtx.putImageData(currentContent, 0, 0);
+      this.contentCtx.globalCompositeOperation = "source-over";
+
+      return dataUrl;
+    } catch (error) {
+      console.error("データURLの生成に失敗しました。", error);
+      return null;
     }
   }
 

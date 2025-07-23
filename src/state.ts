@@ -27,6 +27,14 @@ export function addHistoryEntry(canvasDateURL: string) {
 }
 
 /**
+ * 現在のcanvasデータを取得
+ * @returns {CanvasData} canvasデータ
+ */
+export function getCanvasData(): CanvasData {
+  return history[historyIndex];
+}
+
+/**
  * １つ前のcanvasデータを復元
  * @returns {CanvasData} canvasデータ
  */

@@ -13,3 +13,15 @@ export function positionPopover(button: HTMLButtonElement, popover: HTMLElement)
   //left ボタンの左端の位置
   popover.style.left = `${buttonRect.left}px`;
 }
+
+/**
+ * データURLからa要素を生成しクリックイベントを発生させる。
+ * @param dataUrl 画像のデータURL
+ * @param fileName ダウンロードするファイル名
+*/
+export function downloadingCanvas(dataUrl: string, fileName: string) {
+  const a = document.createElement("a");
+  a.href = dataUrl;
+  a.download = fileName;
+  a.click();
+}

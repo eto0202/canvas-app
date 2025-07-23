@@ -1,4 +1,5 @@
 import * as dom from "./dom.ts";
+import * as utils from "./utils.ts";
 import { DrawingCanvas } from "./canvas";
 import { CursorUI } from "./ui.ts";
 import { positionPopover } from "./utils.ts";
@@ -36,6 +37,22 @@ function eventListener(): void {
   dom.widthInput.addEventListener("change", () => updatePenStyle());
   dom.clearBtn.addEventListener("click", () => app.clear());
   dom.saveCanvasBtn.addEventListener("click", () => app.saveToStorage());
+  dom.exportBox.addEventListener("click", (e: Event) => {
+    const target = e.target as HTMLElement;
+    if (!target) return;
+
+    const formatType = target.dataset.value as "image/jpeg" | "image/png";
+    const fileName = `canvas_${Date.now()}.${formatType.split("/")[1]}`;
+
+    const dataUrl = app.getCanvasDataURL(formatType);
+
+    if (dataUrl) {
+      utils.downloadingCanvas(dataUrl, fileName);
+      dom.exportformatPopover.hidePopover();
+    } else {
+      alert("データURLの生成に失敗しました");
+    }
+  });
 
   dom.exportformatPopover.addEventListener("toggle", (e) => {
     const popover = e.target as HTMLElement;
